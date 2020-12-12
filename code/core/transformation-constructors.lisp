@@ -126,10 +126,7 @@
              offsets output-rank))
     (let (;; The IDENTITY-P flag is set to NIL as soon as an entry is
           ;; detected that deviates from the identity values.
-          (identity-p t)
-          ;; We use a bitmask to track which input indices have already
-          ;; occurred in the output mask.
-          (bitmask 0))
+          (identity-p t))
       (loop for output-index from 0
             for input-index across output-mask
             for scaling across scalings
@@ -153,11 +150,6 @@
                  (unless (array-in-bounds-p input-mask input-index)
                    (error "~@<The output mask element ~S is not below the input rank ~S.~:@>"
                           input-index input-rank))
-                 (let ((bit (ash 1 input-index)))
-                   (unless (zerop (logand bit bitmask))
-                     (error "~@<The output mask ~S contains duplicate entries.~:@>"
-                            output-mask))
-                   (setf bitmask (logior bit bitmask)))
                  (let ((input-constraint (aref input-mask input-index)))
                    (etypecase input-constraint
                      ;; Case 2 - The output mask entry is non-NIL, but
